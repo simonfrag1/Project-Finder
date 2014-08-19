@@ -2,7 +2,7 @@ Primary Functionality
 ----------------------
 
 
-1. [ ] **1. Create page structure and essential UI**
+- [ ] **1. Create page structure and essential UI**
   1. [ ] “Home” page
     1. [ ] Top nav. bar (2 icons) - settings icon on left and search icon on right (Settings icon linked to “settings”        page)
     2. [ ] Bottom tab bar (5 icons) - home, explore, create post, messages, profile. (Each icon on the tab bar are            linked to their respective pages)
