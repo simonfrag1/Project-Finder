@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Circles</title>
+    <style>
+      
+
+	  
+	  html, body, #map-canvas {
+        height: 100%;
+        padding: 0px;
+		margin-top: 0px;
+      }
+	  .controls {
+        margin-top: 20px;
+		margin-left: 20px;
+        border: 1px solid transparent;
+        border-radius: 8px 8px 8px 8px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        height: 68px;
+		width: 500px;
+        outline: none;
+        
+      }
+
+      #pac-input {
+        background-color: #fff;
+		margin-top: 20px;
+		margin-left: 20px;
+		padding: 20px;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        text-overflow: ellipsis;
+		width: 500px;
+		height: 68px;
+      }
+
+      #pac-input:focus {
+        border-color: #fff;
+        margin-top: 20px;
+		padding: 20px;
+		margin-left: 20px;  /* Regular padding-left + 1. */
+        width: 500px;
+		height: 68px;
+      }
+
+      .pac-container {
+        font-family: Roboto;
+      }
+
+      #type-selector {
+        color: #fff;
+        background-color: #4d90fe;
+        padding: 5px 11px 0px 11px;
+      }
+
+      #type-selector label {
+        font-family: Roboto;
+        font-size: 13px;
+        font-weight: 300;
+      }
+	  
+	  
+    </style>
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+    <script>
+	
+	
+// This example creates circles on the map, representing
+// populations in North America.
+
+// First, create an object containing LatLng and population for each city.
+var citymap = {};
+
+citymap['newyork'] = {
+  center: new google.maps.LatLng(40.7303992,-73.9989501),
+  population: 4
+};
+
+var cityCircle;
+
+function initialize() {
+
+					
+	
+  // Create the map.
+  
+   var markers = [];
+   
+  var mapOptions = {
+  
+  
+    zoom: 17,
+    center: new google.maps.LatLng(40.7303992,-73.9989501),
+	
+	disableDefaultUI: true,
+	
+	styles: [
+    {
+        "featureType": "administrative",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "on"
+            },
+            {
+                "saturation": -100
+            },
+            {
+                "lightness": 20
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "on"
+            },
+            {
+                "saturation": -100
+            },
+            {
+                "lightness": 40
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "on"
+            },
+            {
+                "saturation": -10
+            },
+            {
+                "lightness": 30
+            }
+        ]
+    },
+    {
+        "featureType": "landscape.man_made",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "simplified"
+            },
+            {
+                "saturation": -60
+            },
+            {
+                "lightness": 10
+            }
+        ]
+    },
+    {
+        "featureType": "landscape.natural",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "simplified"
+            },
+            {
+                "saturation": -60
+            },
+            {
+                "lightness": 60
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            },
+            {
+                "saturation": -100
+            },
+            {
+                "lightness": 60
+            }
+        ]
+    },
+    {
+        "featureType": "transit",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            },
+            {
+                "saturation": -100
+            },
+            {
+                "lightness": 60
+            }
+        ]
+    }
+]
+                };
+   
+
+  var map = new google.maps.Map(document.getElementById('map-canvas'),
+      mapOptions);
+	  
+  var defaultBounds = new google.maps.LatLngBounds(
+      new google.maps.LatLng(40.7303992,-73.9989501),
+      new google.maps.LatLng(40.7304992,-73.9989601));
+  map.fitBounds(defaultBounds);
+
+  // Construct the circle for each value in citymap.
+  // Note: We scale the area of the circle based on the population.
+  for (var city in citymap) {
+    var populationOptions = {
+      strokeColor: '#FF0000',
+      strokeOpacity: 0.8,
+      strokeWeight: 4,
+      fillColor: '#FF0000',
+      fillOpacity: 0.30,
+      map: map,
+      center: citymap[city].center,
+      radius: Math.sqrt(citymap[city].population) * 50,
+	  draggable: true,
+	  editable: true
+    };
+    // Add the circle for this city to the map.
+    cityCircle = new google.maps.Circle(populationOptions);
+	}
+	
+  var input = /** @type {HTMLInputElement} */(
+      document.getElementById('pac-input'));
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+  var searchBox = new google.maps.places.SearchBox(
+    /** @type {HTMLInputElement} */(input));
+
+  // [START region_getplaces]
+  // Listen for the event fired when the user selects an item from the
+  // pick list. Retrieve the matching places for that item.
+  google.maps.event.addListener(searchBox, 'places_changed', function() {
+    var places = searchBox.getPlaces();
+
+    if (places.length == 0) {
+      return;
+    }
+    for (var i = 0, marker; marker = markers[i]; i++) {
+      marker.setMap(null);
+    }
+
+    // For each place, get the icon, place name, and location.
+    markers = [];
+    var bounds = new google.maps.LatLngBounds();
+    for (var i = 0, place; place = places[i]; i++) {
+      var image = {
+        url: place.icon,
+        size: new google.maps.Size(71, 71),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(17, 34),
+        scaledSize: new google.maps.Size(25, 25)
+      };
+
+      // Create a marker for each place.
+      var marker = new google.maps.Marker({
+        map: map,
+        icon: image,
+        title: place.name,
+        position: place.geometry.location
+      });
+
+      markers.push(marker);
+
+      bounds.extend(place.geometry.location);
+    }
+
+    map.fitBounds(bounds);
+  });
+  // [END region_getplaces]
+
+  // Bias the SearchBox results towards places that are within the bounds of the
+  // current map's viewport.
+  google.maps.event.addListener(map, 'bounds_changed', function() {
+    var bounds = map.getBounds();
+    searchBox.setBounds(bounds);
+  });
+}
+
+	
+	
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+	<style>
+      #target {
+        width: 345px;
+      }
+    </style>
+  </head>
+  <body>
+  <input id="pac-input" class="controls" type="text" placeholder="Search Places">
+    <div id="map-canvas"></div>
+  </body>
+</html>
