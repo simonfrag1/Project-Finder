@@ -12,27 +12,25 @@
         height: 100%;
         padding: 0px;
 		margin-top: 0px;
+		margin-left: 0px;
       }
 	  .controls {
-        margin-top: 20px;
-		margin-left: 20px;
-        border: 1px solid transparent;
+        border: 4px solid #467FD7;
         border-radius: 8px 8px 8px 8px;
         box-sizing: border-box;
         -moz-box-sizing: border-box;
         height: 68px;
-		width: 500px;
-        outline: none;
+		width: 500px; 
         
       }
 
       #pac-input {
-        background-color: #fff;
-		margin-top: 20px;
+		background-color: #fff;
+		margin-top: 60px;
 		margin-left: 20px;
 		padding: 20px;
         font-family: Roboto;
-        font-size: 15px;
+        font-size: 30px;
         font-weight: 300;
         text-overflow: ellipsis;
 		width: 500px;
@@ -40,8 +38,7 @@
       }
 
       #pac-input:focus {
-        border-color: #fff;
-        margin-top: 20px;
+        margin-top: 60px;
 		padding: 20px;
 		margin-left: 20px;  /* Regular padding-left + 1. */
         width: 500px;
@@ -60,7 +57,7 @@
 
       #type-selector label {
         font-family: Roboto;
-        font-size: 13px;
+        font-size: 26px;
         font-weight: 300;
       }
 	  
@@ -74,14 +71,64 @@
 // populations in North America.
 
 // First, create an object containing LatLng and population for each city.
-var citymap = {};
 
+var citymap = {};
+citymap['chicago'] = {
+  center: new google.maps.LatLng(40.7300983,-73.9980702)
+};
 citymap['newyork'] = {
-  center: new google.maps.LatLng(40.7303992,-73.9989501),
-  population: 4
+  center: new google.maps.LatLng(40.7302191,-73.9982900)
+ 
+};
+citymap['losangeles'] = {
+  center: new google.maps.LatLng(40.7305921,-73.9986101)
+
+};
+citymap['vancouver'] = {
+  center: new google.maps.LatLng(40.7308993,-73.9988540)
+ 
 };
 
+citymap['one'] = {
+  center: new google.maps.LatLng(40.7306993,-73.9968540)
+ 
+};
+
+var citymap = {};
+citymap['chicago'] = {
+  center: new google.maps.LatLng(40.7300983,-73.9980702)
+};
+citymap['newyork'] = {
+  center: new google.maps.LatLng(40.7302191,-73.9982900)
+ 
+};
+citymap['losangeles'] = {
+  center: new google.maps.LatLng(40.7305921,-73.9986101)
+
+};
+citymap['vancouver'] = {
+  center: new google.maps.LatLng(40.7308993,-73.9988540)
+ 
+};
+
+citymap['one'] = {
+  center: new google.maps.LatLng(40.7306993,-73.9968540)
+ 
+};
+
+
+
+
+
+
+
+
 var cityCircle;
+
+var secondCircle;
+
+
+
 
 function initialize() {
 
@@ -90,34 +137,22 @@ function initialize() {
   // Create the map.
   
    var markers = [];
-   
+  
+var myLatlng = new google.maps.LatLng(40.7303992,-73.9989501);
+  
   var mapOptions = {
-  
-  
-    zoom: 17,
-    center: new google.maps.LatLng(40.7303992,-73.9989501),
-	
+	zoom: 16,
+    center: myLatlng,
 	disableDefaultUI: true,
-	
-	styles: [
-    {
-        "featureType": "administrative",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "on"
-            },
-            {
-                "saturation": -100
-            },
-            {
-                "lightness": 20
-            }
-        ]
-    },
-    {
-        "featureType": "road",
-        "elementType": "all",
+	styles: [{
+		"featureType": "administrative",
+		"elementType": "all",
+        "stylers": [{
+                "visibility": "on"},
+            { "saturation": -100},
+            { "lightness": 20}]},
+			{"featureType": "road",
+			"elementType": "all",
         "stylers": [
             {
                 "visibility": "on"
@@ -212,30 +247,47 @@ function initialize() {
   var map = new google.maps.Map(document.getElementById('map-canvas'),
       mapOptions);
 	  
-  var defaultBounds = new google.maps.LatLngBounds(
-      new google.maps.LatLng(40.7303992,-73.9989501),
-      new google.maps.LatLng(40.7304992,-73.9989601));
-  map.fitBounds(defaultBounds);
 
+  
   // Construct the circle for each value in citymap.
   // Note: We scale the area of the circle based on the population.
-  for (var city in citymap) {
-    var populationOptions = {
-      strokeColor: '#FF0000',
+  
+
+	var cityCircle = new google.maps.Circle({
+      strokeColor: '#467FD7',
       strokeOpacity: 0.8,
       strokeWeight: 4,
-      fillColor: '#FF0000',
+      fillColor: '#467FD7',
       fillOpacity: 0.30,
       map: map,
-      center: citymap[city].center,
-      radius: Math.sqrt(citymap[city].population) * 50,
+      center: myLatlng,
+      radius: 80,
 	  draggable: true,
 	  editable: true
+    });
+    // Add the circle for this city to the map.
+  
+	
+ for (var city in citymap) {
+    var populationOptions = {
+      strokeColor: '#FF0000',
+      strokeOpacity: 1,
+      strokeWeight: 2,
+      fillColor: '#FF0000',
+      fillOpacity: 1,
+      map: map,
+      center: citymap[city].center,
+      radius: 5
     };
     // Add the circle for this city to the map.
-    cityCircle = new google.maps.Circle(populationOptions);
-	}
+    secondCircle = new google.maps.Circle(populationOptions);
+  }
 	
+	
+	
+	
+	
+	 
   var input = /** @type {HTMLInputElement} */(
       document.getElementById('pac-input'));
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
